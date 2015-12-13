@@ -10,8 +10,10 @@ var MailModel = {
    init : function(){
      this.rules = rules;
      this.messages = msgs;
-   }, 
-  
+   },
+   load : function(rules){
+     this.rules = rules;   
+   },
    /**
     * Filters out messages in the "database" that match the spam rules.
     * @return an array of messages, excluding those that match the filter rules.
@@ -31,7 +33,12 @@ var MailModel = {
             }
         }
         return toReturn;
-    }
+    },
+    
+    
+   getMessages : function (){
+     return this.messages;
+   }
 
   
 };
@@ -46,8 +53,8 @@ var MailModel = {
 // you can add here your views and controllers if you decide to do so.
 var MailOctopus = {
     init: function(){
-        this.messages = msgs;
         MailModel.init();
+        this.messages = MailModel.getMessages();
         for(var i = 0; i<this.messages.length; i++){
             MailView.display(this.messages[i]);
         }
