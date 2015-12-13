@@ -17,7 +17,20 @@ var MailModel = {
     * @return an array of messages, excluding those that match the filter rules.
     */
     filter : function(){
-      return [];
+        var toReturn = [];
+        for(var i=0; i<this.messages.length; i++){
+            var el = this.messages[i];
+            var found = false;
+            for(var j = 0; j < this.rules.length; j++){
+                if(el.search(this.rules[j])>=0){
+                    found = true;
+                }
+            }
+            if(!found){
+                toReturn.push(el);
+            }
+        }
+        return toReturn;
     }
 
   
@@ -31,9 +44,36 @@ var MailModel = {
 
 // We suggest to use js patters. 
 // you can add here your views and controllers if you decide to do so.
-
-
+var MailOctopus = {
+    init: function(){
+        this.messages = msgs;
+        MailModel.init();
+        for(var i = 0; i<this.messages.length; i++){
+            MailView.display(this.messages[i]);
+        }
+        MailView.listen();
+    },
+    filter: function(){
+        var filtered = MailModel.filter();
+        for(var i = 0; i < filtered.length; i++){
+            MailView.display(filtered[i]);
+        }
+    }
+};
+var MailView = {
+    tmpl : "<li>ADDRESS</li> ",
+    display: function(addr){
+        var newItem = this.tmpl.replace("ADDRESS",addr);
+        $(".result").append(newItem);
+    },
+    listen: function(){
+        $(".btn-filter").click(function(){
+            $(".result").html("");  
+            MailOctopus.filter();    
+        });
+    }
+};
 
 $(document).ready(function(){
-
+    MailOctopus.init();
 });
