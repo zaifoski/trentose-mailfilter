@@ -21,15 +21,20 @@ var MailModel = {
     filter : function(){
         var toReturn = [];
         for(var i=0; i<this.messages.length; i++){
-            var el = this.messages[i];
+            var from = this.messages[i].from;
+            var subject = this.messages[i].subject;
             var found = false;
             for(var j = 0; j < this.rules.length; j++){
-                if(el.search(this.rules[j])>=0){
+                if ((from.search(this.rules[j].from)>=0 &&
+                     this.rules[j].from != undefined) ||
+                    (subject.search(this.rules[j].subject)>=0 &&
+                    this.rules[j].subject != undefined))
+                {
                     found = true;
                 }
             }
             if(!found){
-                toReturn.push(el);
+                toReturn.push(this.messages[i]);
             }
         }
         return toReturn;
@@ -70,7 +75,7 @@ var MailOctopus = {
 var MailView = {
     tmpl : "<li>ADDRESS</li> ",
     display: function(addr){
-        var newItem = this.tmpl.replace("ADDRESS",addr);
+        var newItem = this.tmpl.replace("ADDRESS",addr.from+" ||| "+addr.subject);
         $(".result").append(newItem);
     },
     listen: function(){
